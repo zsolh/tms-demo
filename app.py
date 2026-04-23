@@ -14,6 +14,17 @@ app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
+ENTRY_POINT_REDIRECTS = {
+    '/templates/index': 'index',
+    '/templates/index.html': 'index',
+    '/templates/home': 'home_html',
+    '/templates/home.html': 'home_html',
+    '/static/index': 'index',
+    '/static/index.html': 'index',
+    '/static/home': 'home_html',
+    '/static/home.html': 'home_html',
+}
+
 class Shipment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     origin = db.Column(db.String(100), nullable=False)
@@ -47,6 +58,16 @@ with app.app_context():
         db.session.commit()
 
 # Mock data - removed, now using DB
+
+@app.before_request
+def redirect_mistaken_entry_points():
+    target_endpoint = ENTRY_POINT_REDIRECTS.get(request.path)
+    if target_endpoint is None:
+        return None
+    target_url = url_for(target_endpoint)
+    if request.query_string:
+        target_url = f"{target_url}?{request.query_string.decode('utf-8', errors='ignore')}"
+    return redirect(target_url, code=302)
 
 @app.route('/')
 def home():
