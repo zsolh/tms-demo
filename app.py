@@ -15,12 +15,12 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 ENTRY_POINT_REDIRECTS = {
-    '/templates/index': 'index',
-    '/templates/index.html': 'index',
+    '/templates/index': 'home_html',
+    '/templates/index.html': 'home_html',
     '/templates/home': 'home_html',
     '/templates/home.html': 'home_html',
-    '/static/index': 'index',
-    '/static/index.html': 'index',
+    '/static/index': 'home_html',
+    '/static/index.html': 'home_html',
     '/static/home': 'home_html',
     '/static/home.html': 'home_html',
 }
@@ -84,7 +84,12 @@ def home_alias():
 @app.route('/index')
 @app.route('/index.html')
 def index():
-    return render_template('index.html')
+    return redirect(url_for('home_html'))
+
+@app.route('/templates/index')
+@app.route('/templates/index.html')
+def templates_index():
+    return redirect(url_for('home_html'))
 
 @app.route('/report')
 def report():
