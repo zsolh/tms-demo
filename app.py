@@ -63,7 +63,7 @@ def home_alias():
 @app.route('/index')
 @app.route('/index.html')
 def index():
-    return redirect(url_for('home_html'))
+    return render_template('index.html')
 
 @app.route('/report')
 def report():

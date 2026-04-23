@@ -1,15 +1,5 @@
-{% set home_url = url_for('home_html') %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="0; url={{ home_url }}">
-    <title>Redirecting to TMS Demo</title>
-    <script>
-        window.location.replace({{ home_url | tojson }});
-    </script>
-</head>
-<body>
-    <p>Redirecting to <a href="{{ home_url }}">TMS Demo Home</a>...</p>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block content %}
+{% include "_home_content.html" %}
+{% endblock %}
