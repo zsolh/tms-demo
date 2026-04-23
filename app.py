@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify, request, redirect
+from flask import Flask, render_template, jsonify, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 import random
 import time
@@ -51,6 +51,19 @@ with app.app_context():
 @app.route('/')
 def home():
     return render_template('home.html')
+
+@app.route('/home.html')
+def home_html():
+    return render_template('home.html')
+
+@app.route('/home')
+def home_alias():
+    return redirect(url_for('home_html'))
+
+@app.route('/index')
+@app.route('/index.html')
+def index():
+    return redirect(url_for('home_html'))
 
 @app.route('/report')
 def report():
