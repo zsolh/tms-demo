@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Add New Shipment</h2>
+<form method="POST">
+    <div class="mb-3">
+        <label for="origin" class="form-label">Origin</label>
+        <input type="text" class="form-control" id="origin" name="origin" required>
+    </div>
+    <div class="mb-3">
+        <label for="destination" class="form-label">Destination</label>
+        <input type="text" class="form-control" id="destination" name="destination" required>
+    </div>
+    <div class="mb-3">
+        <label for="driver" class="form-label">Driver</label>
+        <input type="text" class="form-control" id="driver" name="driver" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Add Shipment</button>
+    <a href="/shipments" class="btn btn-secondary">Cancel</a>
+</form>
+{% endblock %}

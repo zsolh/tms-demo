@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Team Performance</h2>
+<div class="row">
+    <div class="col-md-6">
+        <canvas id="deliveriesChart"></canvas>
+    </div>
+    <div class="col-md-6">
+        <canvas id="efficiencyChart"></canvas>
+    </div>
+</div>
+<div class="row mt-4">
+    <div class="col-md-6">
+        <canvas id="issuesChart"></canvas>
+    </div>
+    <div class="col-md-6">
+        <canvas id="fuelChart"></canvas>
+    </div>
+</div>
+<div class="row mt-4">
+    <div class="col-md-6">
+        <canvas id="distanceChart"></canvas>
+    </div>
+</div>
+
+<script>
+let deliveriesChart, efficiencyChart, issuesChart, fuelChart, distanceChart;
+
+function updateCharts() {
+    fetch('/api/performance_data')
+        .then(response => response.json())
+        .then(data => {
+            const teams = Object.keys(data);
+            const deliveries = teams.map(team => data[team].deliveries);
+            const efficiencies = teams.map(team => data[team].efficiency);
+            const issues = teams.map(team => data[team].issues);
+            const fuels = teams.map(team => data[team].fuel_efficiency);
+            const distances = teams.map(team => data[team].distance);
+
+            if (!deliveriesChart) {
+                deliveriesChart = new Chart(document.getElementById('deliveriesChart'), {
+                    type: 'bar',
+                    data: {
+                        labels: teams,
+                        datasets: [{
+                            label: 'Deliveries',
+                            data: deliveries,
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            } else {
+                deliveriesChart.data.datasets[0].data = deliveries;
+                deliveriesChart.update();
+            }
+
+            if (!efficiencyChart) {
+                efficiencyChart = new Chart(document.getElementById('efficiencyChart'), {
+                    type: 'line',
+                    data: {
+                        labels: teams,
+                        datasets: [{
+                            label: 'Efficiency (%)',
+                            data: efficiencies,
+                            backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                            borderColor: 'rgba(153, 102, 255, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 100
+                            }
+                        }
+                    }
+                });
+            } else {
+                efficiencyChart.data.datasets[0].data = efficiencies;
+                efficiencyChart.update();
+            }
+
+            if (!issuesChart) {
+                issuesChart = new Chart(document.getElementById('issuesChart'), {
+                    type: 'pie',
+                    data: {
+                        labels: teams,
+                        datasets: [{
+                            label: 'Issues',
+                            data: issues,
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.2)',
+                                'rgba(54, 162, 235, 0.2)',
+                                'rgba(255, 205, 86, 0.2)',
+                                'rgba(75, 192, 192, 0.2)'
+                            ],
+                            borderColor: [
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 205, 86, 1)',
+                                'rgba(75, 192, 192, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true
+                    }
+                });
+            } else {
+                issuesChart.data.datasets[0].data = issues;
+                issuesChart.update();
+            }
+
+            if (!fuelChart) {
+                fuelChart = new Chart(document.getElementById('fuelChart'), {
+                    type: 'bar',
+                    data: {
+                        labels: teams,
+                        datasets: [{
+                            label: 'Fuel Efficiency (MPG)',
+                            data: fuels,
+                            backgroundColor: 'rgba(255, 159, 64, 0.2)',
+                            borderColor: 'rgba(255, 159, 64, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            } else {
+                fuelChart.data.datasets[0].data = fuels;
+                fuelChart.update();
+            }
+
+            if (!distanceChart) {
+                distanceChart = new Chart(document.getElementById('distanceChart'), {
+                    type: 'line',
+                    data: {
+                        labels: teams,
+                        datasets: [{
+                            label: 'Distance Traveled (Miles)',
+                            data: distances,
+                            backgroundColor: 'rgba(201, 203, 207, 0.2)',
+                            borderColor: 'rgba(201, 203, 207, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            } else {
+                distanceChart.data.datasets[0].data = distances;
+                distanceChart.update();
+            }
+        });
+}
+
+// Initial load
+updateCharts();
+
+// Update every 5 seconds
+setInterval(updateCharts, 5000);
+</script>
+{% endblock %}

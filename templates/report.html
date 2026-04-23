@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Management Report</h2>
+<div class="row">
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Total Shipments</h5>
+                <p class="card-text">{{ data.total_shipments }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">On-Time Deliveries</h5>
+                <p class="card-text">{{ data.on_time_deliveries }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Delayed</h5>
+                <p class="card-text">{{ data.delayed }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Revenue</h5>
+                <p class="card-text">${{ data.revenue }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row mt-3">
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Total Vehicles</h5>
+                <p class="card-text">{{ data.total_vehicles }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Active Vehicles</h5>
+                <p class="card-text">{{ data.active_vehicles }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

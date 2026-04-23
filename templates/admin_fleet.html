@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Admin - Fleet</h2>
+<a href="/admin" class="btn btn-secondary mb-3">Back to Admin</a>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Vehicle</th>
+            <th>Driver</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for vehicle in fleet %}
+        <tr>
+            <td>{{ vehicle.id }}</td>
+            <td>{{ vehicle.vehicle }}</td>
+            <td>{{ vehicle.driver }}</td>
+            <td>{{ vehicle.status }}</td>
+            <td>
+                <a href="/admin/vehicle/{{ vehicle.id }}" class="btn btn-sm btn-warning">Edit</a>
+                <a href="/admin/vehicle/delete/{{ vehicle.id }}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

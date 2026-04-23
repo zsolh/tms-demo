@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Fleet Management</h2>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Vehicle</th>
+            <th>Driver</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for vehicle in fleet %}
+        <tr>
+            <td>{{ vehicle.id }}</td>
+            <td>{{ vehicle.vehicle }}</td>
+            <td>{{ vehicle.driver }}</td>
+            <td>{{ vehicle.status }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Edit Shipment</h2>
+<form method="POST">
+    <div class="mb-3">
+        <label for="origin" class="form-label">Origin</label>
+        <input type="text" class="form-control" id="origin" name="origin" value="{{ shipment.origin }}" required>
+    </div>
+    <div class="mb-3">
+        <label for="destination" class="form-label">Destination</label>
+        <input type="text" class="form-control" id="destination" name="destination" value="{{ shipment.destination }}" required>
+    </div>
+    <div class="mb-3">
+        <label for="status" class="form-label">Status</label>
+        <select class="form-control" id="status" name="status" required>
+            <option value="Pending" {% if shipment.status == 'Pending' %}selected{% endif %}>Pending</option>
+            <option value="In Transit" {% if shipment.status == 'In Transit' %}selected{% endif %}>In Transit</option>
+            <option value="Delivered" {% if shipment.status == 'Delivered' %}selected{% endif %}>Delivered</option>
+            <option value="Delayed" {% if shipment.status == 'Delayed' %}selected{% endif %}>Delayed</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="driver" class="form-label">Driver</label>
+        <input type="text" class="form-control" id="driver" name="driver" value="{{ shipment.driver }}" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Update Shipment</button>
+    <a href="/admin/shipments" class="btn btn-secondary">Cancel</a>
+</form>
+{% endblock %}

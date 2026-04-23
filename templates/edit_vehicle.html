@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Edit Vehicle</h2>
+<form method="POST">
+    <div class="mb-3">
+        <label for="vehicle" class="form-label">Vehicle</label>
+        <input type="text" class="form-control" id="vehicle" name="vehicle" value="{{ vehicle.vehicle }}" required>
+    </div>
+    <div class="mb-3">
+        <label for="driver" class="form-label">Driver</label>
+        <input type="text" class="form-control" id="driver" name="driver" value="{{ vehicle.driver }}" required>
+    </div>
+    <div class="mb-3">
+        <label for="status" class="form-label">Status</label>
+        <select class="form-control" id="status" name="status" required>
+            <option value="Active" {% if vehicle.status == 'Active' %}selected{% endif %}>Active</option>
+            <option value="Maintenance" {% if vehicle.status == 'Maintenance' %}selected{% endif %}>Maintenance</option>
+            <option value="Inactive" {% if vehicle.status == 'Inactive' %}selected{% endif %}>Inactive</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Update Vehicle</button>
+    <a href="/admin/fleet" class="btn btn-secondary">Cancel</a>
+</form>
+{% endblock %}
