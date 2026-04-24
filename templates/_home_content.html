@@ -1,6 +1,24 @@
-<div class="jumbotron">
-    <h1 class="display-4">Transportation Management Software Demo</h1>
-    <p class="lead">A minimalistic TMS application with browser and smartphone access, management reports, and real-time team performance diagrams.</p>
-    <hr class="my-4">
-    <p>Navigate using the menu above to explore features.</p>
+<div class="page-head">
+    <div>
+        <h1>TMS Control Desk</h1>
+        <p>Compact transportation operations view for dispatch, fleet, reporting, and admin work.</p>
+    </div>
+    <div class="action-row">
+        <a href="/add_shipment" class="btn btn-primary btn-sm">New Shipment</a>
+        <a href="/admin" class="btn btn-outline-secondary btn-sm">Admin</a>
+    </div>
+</div>
+
+<div class="metric-grid">
+    <div class="metric"><span>Shipments</span><strong>{{ stats.shipments }}</strong></div>
+    <div class="metric"><span>Fleet units</span><strong>{{ stats.fleet }}</strong></div>
+    <div class="metric"><span>In transit</span><strong>{{ stats.in_transit }}</strong></div>
+    <div class="metric"><span>Active vehicles</span><strong>{{ stats.active }}</strong></div>
+</div>
+
+<div class="shortcut-grid">
+    <a href="/shipments" class="shortcut"><strong>Shipments</strong><span>View live shipment board</span></a>
+    <a href="/fleet" class="shortcut"><strong>Fleet</strong><span>Check vehicles and drivers</span></a>
+    <a href="/report" class="shortcut"><strong>Report</strong><span>Review management metrics</span></a>
+    <a href="/performance" class="shortcut"><strong>Performance</strong><span>Monitor team charts</span></a>
 </div>

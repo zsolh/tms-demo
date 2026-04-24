@@ -1,5 +1,6 @@
 from flask import Flask, render_template, jsonify, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import or_
 import random
 import time
 import os
@@ -38,24 +39,57 @@ class Vehicle(db.Model):
     driver = db.Column(db.String(100), nullable=False)
     status = db.Column(db.String(50), default='Active')
 
+
+SHIPMENT_STATUS_OPTIONS = ['Pending', 'In Transit', 'Delivered', 'Delayed']
+VEHICLE_STATUS_OPTIONS = ['Active', 'Maintenance', 'Inactive']
+TEST_RECORDS_PER_TABLE = 50
+
+SAMPLE_CITIES = [
+    'New York', 'Los Angeles', 'Chicago', 'Miami', 'Seattle', 'Denver',
+    'Dallas', 'Atlanta', 'Phoenix', 'Portland', 'Boston', 'Houston',
+    'Detroit', 'Nashville', 'San Diego', 'Minneapolis', 'Charlotte',
+    'Kansas City', 'Cleveland', 'Salt Lake City'
+]
+SAMPLE_DRIVERS = [
+    'John Doe', 'Jane Smith', 'Bob Johnson', 'Alex Carter', 'Maria Lopez',
+    'Chris Nguyen', 'Priya Patel', 'Sam Wilson', 'Nina Brown', 'Owen Martin',
+    'Lena Fischer', 'David Clark', 'Maya Green', 'Leo Turner', 'Sara Adams'
+]
+SAMPLE_VEHICLES = ['Truck', 'Van', 'Reefer', 'Box Truck', 'Flatbed', 'Tanker']
+
+
+def seed_test_data():
+    shipment_count = Shipment.query.count()
+    vehicle_count = Vehicle.query.count()
+
+    if shipment_count < TEST_RECORDS_PER_TABLE:
+        shipments = []
+        for index in range(shipment_count + 1, TEST_RECORDS_PER_TABLE + 1):
+            shipments.append(Shipment(
+                origin=SAMPLE_CITIES[index % len(SAMPLE_CITIES)],
+                destination=SAMPLE_CITIES[(index * 4 + 3) % len(SAMPLE_CITIES)],
+                status=SHIPMENT_STATUS_OPTIONS[index % len(SHIPMENT_STATUS_OPTIONS)],
+                driver=SAMPLE_DRIVERS[index % len(SAMPLE_DRIVERS)],
+            ))
+        db.session.add_all(shipments)
+
+    if vehicle_count < TEST_RECORDS_PER_TABLE:
+        vehicles = []
+        for index in range(vehicle_count + 1, TEST_RECORDS_PER_TABLE + 1):
+            vehicles.append(Vehicle(
+                vehicle=f'{SAMPLE_VEHICLES[index % len(SAMPLE_VEHICLES)]} {index:03d}',
+                driver=SAMPLE_DRIVERS[(index * 2) % len(SAMPLE_DRIVERS)],
+                status=VEHICLE_STATUS_OPTIONS[index % len(VEHICLE_STATUS_OPTIONS)],
+            ))
+        db.session.add_all(vehicles)
+
+    if shipment_count < TEST_RECORDS_PER_TABLE or vehicle_count < TEST_RECORDS_PER_TABLE:
+        db.session.commit()
+
+
 with app.app_context():
     db.create_all()
-    if not Shipment.query.first():
-        initial_shipments = [
-            Shipment(origin='New York', destination='Los Angeles', status='In Transit', driver='John Doe'),
-            Shipment(origin='Chicago', destination='Miami', status='Delivered', driver='Jane Smith'),
-            Shipment(origin='Seattle', destination='Denver', status='Pending', driver='Bob Johnson'),
-        ]
-        db.session.add_all(initial_shipments)
-        db.session.commit()
-    if not Vehicle.query.first():
-        initial_fleet = [
-            Vehicle(vehicle='Truck A', driver='John Doe', status='Active'),
-            Vehicle(vehicle='Truck B', driver='Jane Smith', status='Maintenance'),
-            Vehicle(vehicle='Van C', driver='Bob Johnson', status='Active'),
-        ]
-        db.session.add_all(initial_fleet)
-        db.session.commit()
+    seed_test_data()
 
 # Mock data - removed, now using DB
 
@@ -71,11 +105,17 @@ def redirect_mistaken_entry_points():
 
 @app.route('/')
 def home():
-    return render_template('home.html')
+    stats = {
+        'shipments': Shipment.query.count(),
+        'fleet': Vehicle.query.count(),
+        'in_transit': Shipment.query.filter_by(status='In Transit').count(),
+        'active': Vehicle.query.filter_by(status='Active').count(),
+    }
+    return render_template('home.html', stats=stats)
 
 @app.route('/home.html')
 def home_html():
-    return render_template('home.html')
+    return home()
 
 @app.route('/home')
 def home_alias():
@@ -130,13 +170,33 @@ def performance_data():
 
 @app.route('/shipments')
 def shipments_page():
-    shipments = Shipment.query.all()
-    return render_template('shipments.html', shipments=shipments)
+    query = request.args.get('search', '').strip()
+    status = request.args.get('status', '').strip()
+    shipments_query = Shipment.query
+    if query:
+        like = f'%{query}%'
+        shipments_query = shipments_query.filter(
+            or_(Shipment.origin.ilike(like), Shipment.destination.ilike(like), Shipment.driver.ilike(like))
+        )
+    if status:
+        shipments_query = shipments_query.filter_by(status=status)
+    shipments = shipments_query.order_by(Shipment.id.desc()).all()
+    return render_template('shipments.html', shipments=shipments, search=query, status=status, statuses=SHIPMENT_STATUS_OPTIONS)
 
 @app.route('/fleet')
 def fleet_page():
-    fleet = Vehicle.query.all()
-    return render_template('fleet.html', fleet=fleet)
+    query = request.args.get('search', '').strip()
+    status = request.args.get('status', '').strip()
+    fleet_query = Vehicle.query
+    if query:
+        like = f'%{query}%'
+        fleet_query = fleet_query.filter(
+            or_(Vehicle.vehicle.ilike(like), Vehicle.driver.ilike(like))
+        )
+    if status:
+        fleet_query = fleet_query.filter_by(status=status)
+    fleet = fleet_query.order_by(Vehicle.id.desc()).all()
+    return render_template('fleet.html', fleet=fleet, search=query, status=status, statuses=VEHICLE_STATUS_OPTIONS)
 
 @app.route('/add_shipment', methods=['GET', 'POST'])
 def add_shipment():
@@ -157,12 +217,12 @@ def admin():
 
 @app.route('/admin/shipments')
 def admin_shipments():
-    shipments = Shipment.query.all()
+    shipments = Shipment.query.order_by(Shipment.id.desc()).all()
     return render_template('admin_shipments.html', shipments=shipments)
 
 @app.route('/admin/fleet')
 def admin_fleet():
-    fleet = Vehicle.query.all()
+    fleet = Vehicle.query.order_by(Vehicle.id.desc()).all()
     return render_template('admin_fleet.html', fleet=fleet)
 
 @app.route('/admin/shipment/<int:id>', methods=['GET', 'POST'])

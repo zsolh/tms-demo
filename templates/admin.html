@@ -1,25 +1,14 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Admin Console</h2>
-<div class="row">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Shipments</h5>
-                <p class="card-text">Manage shipment records</p>
-                <a href="/admin/shipments" class="btn btn-primary">Manage Shipments</a>
-            </div>
-        </div>
+<div class="page-head">
+    <div>
+        <h1>Admin Console</h1>
+        <p>Maintain shipment and fleet database records</p>
     </div>
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Fleet</h5>
-                <p class="card-text">Manage vehicle records</p>
-                <a href="/admin/fleet" class="btn btn-primary">Manage Fleet</a>
-            </div>
-        </div>
-    </div>
+</div>
+<div class="shortcut-grid">
+    <a href="/admin/shipments" class="shortcut"><strong>Shipments</strong><span>Manage shipment records</span></a>
+    <a href="/admin/fleet" class="shortcut"><strong>Fleet</strong><span>Manage vehicle records</span></a>
 </div>
 {% endblock %}

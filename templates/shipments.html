@@ -1,28 +1,48 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Shipment Management</h2>
-<a href="/add_shipment" class="btn btn-primary mb-3">Add New Shipment</a>
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Origin</th>
-            <th>Destination</th>
-            <th>Status</th>
-            <th>Driver</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for shipment in shipments %}
-        <tr>
-            <td>{{ shipment.id }}</td>
-            <td>{{ shipment.origin }}</td>
-            <td>{{ shipment.destination }}</td>
-            <td>{{ shipment.status }}</td>
-            <td>{{ shipment.driver }}</td>
-        </tr>
+<div class="page-head">
+    <div>
+        <h1>Shipment Board</h1>
+        <p>{{ shipments|length }} records shown</p>
+    </div>
+    <a href="/add_shipment" class="btn btn-primary btn-sm">Add Shipment</a>
+</div>
+
+<form method="get" class="filter-bar">
+    <input type="text" name="search" value="{{ search }}" placeholder="Search origin, destination, driver">
+    <select name="status">
+        <option value="">All statuses</option>
+        {% for option in statuses %}
+        <option value="{{ option }}" {% if status == option %}selected{% endif %}>{{ option }}</option>
         {% endfor %}
-    </tbody>
-</table>
+    </select>
+    <button type="submit" class="btn btn-primary btn-sm">Filter</button>
+    <a href="/shipments" class="btn btn-outline-secondary btn-sm">Reset</a>
+</form>
+
+<div class="table-scroll">
+    <table class="table table-sm data-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Origin</th>
+                <th>Destination</th>
+                <th>Status</th>
+                <th>Driver</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for shipment in shipments %}
+            <tr>
+                <td class="muted">#{{ shipment.id }}</td>
+                <td>{{ shipment.origin }}</td>
+                <td>{{ shipment.destination }}</td>
+                <td><span class="status-pill">{{ shipment.status }}</span></td>
+                <td>{{ shipment.driver }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}

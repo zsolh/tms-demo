@@ -1,25 +1,45 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Fleet Management</h2>
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Vehicle</th>
-            <th>Driver</th>
-            <th>Status</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for vehicle in fleet %}
-        <tr>
-            <td>{{ vehicle.id }}</td>
-            <td>{{ vehicle.vehicle }}</td>
-            <td>{{ vehicle.driver }}</td>
-            <td>{{ vehicle.status }}</td>
-        </tr>
+<div class="page-head">
+    <div>
+        <h1>Fleet Board</h1>
+        <p>{{ fleet|length }} records shown</p>
+    </div>
+</div>
+
+<form method="get" class="filter-bar">
+    <input type="text" name="search" value="{{ search }}" placeholder="Search vehicle or driver">
+    <select name="status">
+        <option value="">All statuses</option>
+        {% for option in statuses %}
+        <option value="{{ option }}" {% if status == option %}selected{% endif %}>{{ option }}</option>
         {% endfor %}
-    </tbody>
-</table>
+    </select>
+    <button type="submit" class="btn btn-primary btn-sm">Filter</button>
+    <a href="/fleet" class="btn btn-outline-secondary btn-sm">Reset</a>
+</form>
+
+<div class="table-scroll">
+    <table class="table table-sm data-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Vehicle</th>
+                <th>Driver</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for vehicle in fleet %}
+            <tr>
+                <td class="muted">#{{ vehicle.id }}</td>
+                <td>{{ vehicle.vehicle }}</td>
+                <td>{{ vehicle.driver }}</td>
+                <td><span class="status-pill">{{ vehicle.status }}</span></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}

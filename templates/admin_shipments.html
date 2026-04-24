@@ -1,33 +1,40 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Admin - Shipments</h2>
-<a href="/admin" class="btn btn-secondary mb-3">Back to Admin</a>
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Origin</th>
-            <th>Destination</th>
-            <th>Status</th>
-            <th>Driver</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for shipment in shipments %}
-        <tr>
-            <td>{{ shipment.id }}</td>
-            <td>{{ shipment.origin }}</td>
-            <td>{{ shipment.destination }}</td>
-            <td>{{ shipment.status }}</td>
-            <td>{{ shipment.driver }}</td>
-            <td>
-                <a href="/admin/shipment/{{ shipment.id }}" class="btn btn-sm btn-warning">Edit</a>
-                <a href="/admin/shipment/delete/{{ shipment.id }}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</a>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="page-head">
+    <div>
+        <h1>Admin - Shipments</h1>
+        <p>{{ shipments|length }} database records</p>
+    </div>
+    <a href="/admin" class="btn btn-outline-secondary btn-sm">Back</a>
+</div>
+<div class="table-scroll">
+    <table class="table table-sm data-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Origin</th>
+                <th>Destination</th>
+                <th>Status</th>
+                <th>Driver</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for shipment in shipments %}
+            <tr>
+                <td class="muted">#{{ shipment.id }}</td>
+                <td>{{ shipment.origin }}</td>
+                <td>{{ shipment.destination }}</td>
+                <td><span class="status-pill">{{ shipment.status }}</span></td>
+                <td>{{ shipment.driver }}</td>
+                <td class="action-cell">
+                    <a href="/admin/shipment/{{ shipment.id }}" class="btn btn-sm btn-warning">Edit</a>
+                    <a href="/admin/shipment/delete/{{ shipment.id }}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}
